@@ -3,7 +3,7 @@ import requests
 import os
 from urllib.parse import urljoin
 
-# スクレイピングするURLを指定
+# set target url
 targetUrl = input("url : ")
 
 response = requests.get(targetUrl)
@@ -14,28 +14,25 @@ image_url_list = []
 for img in soup.find_all('img'):
     img_url = img.get('src')
 
-    if img_url:  # src属性が存在する場合
-        # 完全なURLを作成
+    if img_url:
+        # make full url 
         img_url = urljoin(targetUrl, img_url)
 
         # JPEG形式の画像だけを対象にする
         if img_url.lower().endswith(('.jpg', '.jpeg')):
             image_url_list.append(img_url)
 
-# 画像URLを表示
+# print image url
 for i_url in image_url_list:
     print(i_url)
 
-# ダウンロードした画像を保存するディレクトリを作成
+# make downloaded image directory
 os.makedirs('images', exist_ok=True)
 
-# 画像をダウンロード
+# download images
 for i, img_url in enumerate(image_url_list):
     try:
-        # 画像データを取得
         img_data = requests.get(img_url).content
-
-        # 画像を保存
         with open(f'./images/image_{i}.jpg', 'wb') as f:
             f.write(img_data)
 
